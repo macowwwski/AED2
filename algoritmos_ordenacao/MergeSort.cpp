@@ -6,7 +6,7 @@
 using namespace std;
 
 
-// NESSA FUNÇÃO JÁ SE SABE PREVIAMENTE QUE HÁ SUBVESTORES ORDENADOS DENTRO DO VETOR INICIAL
+// NESSA FUNÇÃO JÁ SE SABE PREVIAMENTE QUE HÁ SUBVETORES ORDENADOS DENTRO DO VETOR INICIAL
 
 void merge(vector<int> &v, int p, int q, int r){
     //alocar E com n1 elementos(p...q)
@@ -56,5 +56,18 @@ void merge(vector<int> &v, int p, int q, int r){
         v[k] = D[j];
         j++;
         k++;
+    }
+}
+
+void MergeSort(vector <int> v, int E, int D){
+    if(E < D){
+        int m = (E + D)/2; // divisão inteira para pegar o meio (m ou primeiro q)
+
+        // recursividade: ordenar primeira metade e segunda metade
+        MergeSort(v, E, m);
+        MergeSort(v, m+1, D);
+
+        // merge das duas metades
+        merge(v, E, m, D);
     }
 }
