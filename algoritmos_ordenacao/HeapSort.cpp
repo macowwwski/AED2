@@ -5,6 +5,12 @@
 
 using namespace std;
 
+void trocar(int& a, int& b){
+    int aux = a;
+    a = b;
+    b = aux;
+}
+
 void trocar(int *v, int p1, int p2){
     int temp = v[p1];
     v[p1] = v[p2];
@@ -12,8 +18,8 @@ void trocar(int *v, int p1, int p2){
 }
 
 void max_heapify(vector<int>& v, int i, int limite){
-    int e = esq(i); // salva as posições dos filhos
-    int d = dir(i);
+    int e = 2*i+1; // salva as posições dos filhos
+    int d = e + 1;
     int maior;
 
     if ((e < limite) && (v[e] > v[i])){ // usa limite para não haver acesso inválido
@@ -24,7 +30,7 @@ void max_heapify(vector<int>& v, int i, int limite){
         maior = d;
     }
     if (maior != i){
-        trocar(v, v[i], v[maior]);
+        trocar(v[i], v[maior]);
         max_heapify(v, maior, limite);
     }
 }
