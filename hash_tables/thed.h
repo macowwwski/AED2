@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <utility>
+#include <iostream>
 
 
 using namespace std;
@@ -10,6 +11,8 @@ class TabHashEncadeamento {
 public:
     //Construtor: inicializa uma nova tabela com tamanho m
     TabHashEncadeamento(int tamanho){
+        this->limiar = limiar;
+        this->redims =
         this->m = tamanho;
         this->n = 0;
         tabela = new vector<pair<int,int>>[this->m]; // alocando a tabela
@@ -30,16 +33,29 @@ public:
             par.second = valor; // atualiza o valor (contador)
             return;
         }
+        float alpha = (float)this->n / this->m;
+        if(alpha >= limiar){
+            redimensionar(this-> m*2);
+            redims++;
+        }
 
-        else {
             int h = this->hash(chave);
             this->tabela[h].push_back({chave, valor}); // na posição h, entra na lista e coloca o novo par na última posição (push_back)
             this->n++;
-        }
     }
     
     //Remove o par com a chave da tabeka
-    void remover(int chave);
+    void remover(int chave){
+        int h = hash(chave);
+        auto& l = this->tabela[h];
+        for (auto iter = l.begin(); iter != l.end(); iter++){
+            if(iter->first == chave){
+                l.erase(iter);
+                return;
+            }
+        }
+
+    }
     
     //Busca o valor associado a chave na tabela
     std::pair<int,int>& buscar(int chave){
@@ -56,10 +72,24 @@ public:
     }
     
     //Imprime a tabela
-    void imprimir();
+    void imprimir(){
+        for(int i = 0; i < this->m; i++){
+            cout << i << ": ";
+            for(auto& x : this->tabela[i]){
+                cout << "(" << x.first << ","
+                << x.second << "}, "; 
+            }
+            cout << "\n";
+        }
+    }
 
     //Imprime informações sobre a tabela (m, n e fator de carga)
-    void imprimir_info();
+    void imprimir_info(){
+        cout << "m: " << m << "\n"
+        << "n: " << n << "\n"
+        << "alpha: " << (float)n/m << "\n"
+        << "redims: " << redims << "\n";
+    }
 
     //par chave-valor inválido para indicar que a chave não foi encontrada
     std::pair<int,int> invalido;
@@ -83,6 +113,18 @@ private:
     } 
 
     // redimensiona a tabela para o novo tamanho (novo_m)
-    void redimensionar(int novo_m); 
+    void redimensionar(int novo_m){
+        auto* antiga = this->tabela;
+        int m_antigo = this->m;
+        this->tabela = new vector<pair<int,int>>[novo_m];
+        this->m = novo_m;
+        this->n = 0;
+        for (int i = 0; i < m_antigo; i++){
+            for(auto& x : antiga[i]){
+                this->inserir(x.first, x.second);
+            }
+        }
+
+    }
     
 };
