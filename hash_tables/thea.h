@@ -9,12 +9,14 @@ using namespace std;
 class TabHashEndAberto {
 public:
     //Construtor: inicializa uma nova tabela com tamanho m
-    TabHashEndAberto(int tamanho){
+    TabHashEndAberto(int tamanho, float limiar){
+        this->limiar = limiar;
+        this->colisoes = 0;
         this->m = tamanho;
         this->n = 0;
-        this-> invalido;
+        this->invalido = {-1, -1};
         this->tabela = new Elemento[this->m];
-        for (int i = 0; i < this->m; i++){
+        for(int i = 0; i < this->m; i++){
             this->tabela[i].estado = Estado::LIVRE;
         }
     }
@@ -32,14 +34,18 @@ public:
             this->tabela[pos].valor = valor;    // Atualiza valor
             return;
         }
+
+        float alpha = (float) this->n / this->m;
+        if (alpha > limiar){
+            redimensionar(this->n*2);
+        }
+
         // chave ainda não está na tabela
         int k = 0;
         int h = hash(chave, k);
         while(this->tabela[h].estado == Estado::OCUPADO){
+            this->colisoes;
             k++;
-            if (k == this->m){
-                return;
-            }
             h = hash(chave, k);
         }
         this->tabela[h].estado = Estado::OCUPADO;
@@ -88,6 +94,7 @@ public:
         std::cout << "n: " << this->n << std::endl;
         std::cout << "fator de carga: " << (float)this->n/this->m << std::endl;
         std::cout << "redimensionamentos: " << this->redims << std::endl;
+        std::cout << "colisões: " << this->colisoes << "\n";
     }
 
     //par chave-valor inválido para indicar que a chave não foi encontrada
@@ -119,6 +126,7 @@ private:
     // limiar para redimensionamento. quando n/m > limiar, redimensionar
     float limiar; 
     int redims; // número de redimensionamentos realizados
+    int colisoes;
 
     Elemento *tabela; // tabela hash
 
@@ -127,7 +135,24 @@ private:
     }
 
     // redimensiona a tabela para o novo tamanho (novo_m)
-    void redimensionar(int novo_m); 
+    void redimensionar(int novo_m){
+        Elemento* tab_antiga = this->tabela;
+        int m_antigo = this->m;
+        this->tabela = new Elemento[novo_m];
+
+        for(int i = 0; i < novo_m; i++){
+            this->tabela->estado = Estado::LIVRE;
+        }
+        this->n = 0;
+        this->m = novo_m;
+        for(int i = 0; i < m_antigo; i++){
+            if (tab_antiga[i].estado == Estado::OCUPADO){
+                this->inserir(tab_antiga[i].chave, tab_antiga->valor);
+            }
+        }
+        delete[] tab_antiga;
+
+    }
 
     //retorna a posição que a chave ocupa na tabela. 
     //(ou -1 se a chave não estiver na tabela)

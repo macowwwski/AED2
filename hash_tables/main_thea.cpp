@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 void test1(){
-    TabHashEndAberto tab(10);
+    TabHashEndAberto tab(10, 0.5);
 
     tab.inserir(10, 0);
     tab.inserir(21, 0);
@@ -98,7 +98,7 @@ void test3(int argc, char** argv){
     int n = atoi(argv[2]);
     float limiar = atof(argv[3]);
 
-    TabHashEndAberto tab(m);
+    TabHashEndAberto tab(m, limiar);
 
     for(int i = 0; i < n; i++){
         tab.inserir(rand() % (n*100), rand() % (n*100));
