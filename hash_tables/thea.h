@@ -107,6 +107,11 @@ public:
     std::vector<std::pair<int,int>> itens();
 
 private:
+    enum class Sondagem {
+        LINEAR,
+        QUADRATICA,
+        DUPLA
+    };
 
     enum class Estado {
         LIVRE,
